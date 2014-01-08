@@ -4,12 +4,17 @@ class CPhysicsBody implements eee.IComponent {
     public jumping: boolean = false;
     public grounded: boolean = false;
 
+    public wasleft: boolean = false;
+    public wasright: boolean = false;
+
     //velocity
     public vx: number = 0;
     public vy: number = 0; 
 
     //
-    public speed: number = 15;
+    public speed: number = 12;
+
+
 
     constructor(
         public x1: number = 0,

@@ -12,11 +12,13 @@ var CPhysicsBody = (function () {
         this.isground = isground;
         this.jumping = false;
         this.grounded = false;
+        this.wasleft = false;
+        this.wasright = false;
         //velocity
         this.vx = 0;
         this.vy = 0;
         //
-        this.speed = 15;
+        this.speed = 12;
     }
     CPhysicsBody.__label__ = 'rbox';
     return CPhysicsBody;

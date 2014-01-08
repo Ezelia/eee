@@ -57,7 +57,7 @@ ground.add(new CPhysicsBody(-200, -20, 200, 20, true));
 
 
 new eee.Entity()
-    .add(new CPosition(300, 350))
+    .add(new CPosition(300, 450))
     .add(new CSize(500, 40))
     .add(new CInput())
     .add(new CSkin('#009'))

@@ -29,6 +29,7 @@ var modules;
 
             if (!pbody.isground) {
                 if (input.keys.UP || input.keys.SPACE) {
+                    // up arrow or space
                     if (!pbody.jumping && pbody.grounded) {
                         pbody.jumping = true;
                         pbody.grounded = false;
@@ -38,18 +39,19 @@ var modules;
                     }
                 }
                 if (input.keys.RIGHT) {
+                    // right arrow
                     if (pbody.vx < pbody.speed) {
-                        pbody.vx++;
+                        pbody.vx = pbody.jumping ? pbody.vx + 2 : pbody.vx + 1;
                     }
                 }
                 if (input.keys.LEFT) {
                     if (pbody.vx > -pbody.speed) {
-                        pbody.vx--;
+                        pbody.vx = pbody.jumping ? pbody.vx - 2 : pbody.vx - 1;
                     }
                 }
 
                 pbody.vx *= this.friction;
-                pbody.vy += this.gravity;
+                pbody.vy += this.gravity; //(this.deltaTime * this.gravity) / (1000 / 60);
 
                 pbody.grounded = false;
 
@@ -122,6 +124,7 @@ var modules;
             var hHeights = (pbodyA.y2 - pbodyA.y1 + pbodyB.y2 - pbodyB.y1) / 2;
             var colDir = '';
 
+            // if the x and y vector are less than the half width or half height, they we must be inside the object, causing a collision
             if (Math.abs(vX) <= hWidths && Math.abs(vY) <= hHeights) {
                 var oX = hWidths - Math.abs(vX), oY = hHeights - Math.abs(vY);
                 if (oX >= oY) {

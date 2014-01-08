@@ -12,15 +12,15 @@ declare class CSize implements eee.IComponent {
     constructor(width?: number, height?: number);
 }
 declare module util.DOM {
-    function select(el): void;
-    function getNumericStyleProperty(style, prop): number;
-    function element_position(e): {
+    function select(el: any): void;
+    function getNumericStyleProperty(style: any, prop: any): number;
+    function element_position(e: any): {
         x: number;
         y: number;
     };
-    function triggerDomEvent(element, eventName, sender): void;
-    function AddEvent(element, event_name, event_function): void;
-    function Ready(fn): void;
+    function triggerDomEvent(element: any, eventName: any, sender: any): void;
+    function AddEvent(element: any, event_name: any, event_function: any): void;
+    function Ready(fn: any): void;
 }
 declare class CPhysicsBody implements eee.IComponent {
     public x1: number;
@@ -31,6 +31,8 @@ declare class CPhysicsBody implements eee.IComponent {
     static __label__: string;
     public jumping: boolean;
     public grounded: boolean;
+    public wasleft: boolean;
+    public wasright: boolean;
     public vx: number;
     public vy: number;
     public speed: number;
@@ -108,7 +110,7 @@ declare class CPosition implements eee.IComponent {
     constructor(x?: number, y?: number);
 }
 declare class playerBhv extends eee.TBehaviour {
-    public keyUpdate(keys): void;
+    public keyUpdate(keys: any): void;
 }
 declare var canvas: HTMLCanvasElement;
 declare var mPhysics: modules.Physics;

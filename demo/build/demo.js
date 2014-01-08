@@ -92,6 +92,7 @@ var util;
             event.eventName = eventName;
             event.sender = sender;
 
+            //event.memo = memo || { };
             if (document.createEvent) {
                 element.dispatchEvent(event);
             } else {
@@ -101,8 +102,8 @@ var util;
         DOM.triggerDomEvent = triggerDomEvent;
         function AddEvent(element, event_name, event_function) {
             if (element.addEventListener)
-                element.addEventListener(event_name, event_function, false);
-else if (element.attachEvent)
+                element.addEventListener(event_name, event_function, false); //don't need the 'call' trick because in FF everything already works in the right way
+            else if (element.attachEvent)
                 element.attachEvent("on" + event_name, function () {
                     event_function.call(element);
                 });
@@ -112,7 +113,7 @@ else if (element.attachEvent)
         function Ready(fn) {
             var win = window;
 
-            if ((navigator).isCocoonJS) {
+            if (navigator.isCocoonJS) {
                 fn.call(win);
                 return;
             }
@@ -135,7 +136,7 @@ else if (element.attachEvent)
 
             if (doc.readyState == 'complete')
                 fn.call(win, 'lazy');
-else {
+            else {
                 if (doc.createEventObject && root.doScroll) {
                     try  {
                         top = !win.frameElement;
@@ -167,11 +168,13 @@ var CPhysicsBody = (function () {
         this.isground = isground;
         this.jumping = false;
         this.grounded = false;
+        this.wasleft = false;
+        this.wasright = false;
         //velocity
         this.vx = 0;
         this.vy = 0;
         //
-        this.speed = 15;
+        this.speed = 12;
     }
     CPhysicsBody.__label__ = 'rbox';
     return CPhysicsBody;
@@ -291,6 +294,7 @@ var modules;
 
             if (!pbody.isground) {
                 if (input.keys.UP || input.keys.SPACE) {
+                    // up arrow or space
                     if (!pbody.jumping && pbody.grounded) {
                         pbody.jumping = true;
                         pbody.grounded = false;
@@ -300,18 +304,19 @@ var modules;
                     }
                 }
                 if (input.keys.RIGHT) {
+                    // right arrow
                     if (pbody.vx < pbody.speed) {
-                        pbody.vx++;
+                        pbody.vx = pbody.jumping ? pbody.vx + 2 : pbody.vx + 1;
                     }
                 }
                 if (input.keys.LEFT) {
                     if (pbody.vx > -pbody.speed) {
-                        pbody.vx--;
+                        pbody.vx = pbody.jumping ? pbody.vx - 2 : pbody.vx - 1;
                     }
                 }
 
                 pbody.vx *= this.friction;
-                pbody.vy += this.gravity;
+                pbody.vy += this.gravity; //(this.deltaTime * this.gravity) / (1000 / 60);
 
                 pbody.grounded = false;
 
@@ -384,6 +389,7 @@ var modules;
             var hHeights = (pbodyA.y2 - pbodyA.y1 + pbodyB.y2 - pbodyB.y1) / 2;
             var colDir = '';
 
+            // if the x and y vector are less than the half width or half height, they we must be inside the object, causing a collision
             if (Math.abs(vX) <= hWidths && Math.abs(vY) <= hHeights) {
                 var oX = hWidths - Math.abs(vX), oY = hHeights - Math.abs(vY);
                 if (oX >= oY) {
@@ -507,10 +513,10 @@ var RAFScheduler = (function () {
 // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
 // requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
 // MIT license
-((function (window) {
+(function (window) {
     'use strict';
 
-    if ((navigator).isCocoonJS)
+    if (navigator.isCocoonJS)
         return;
 
     var lastTime = 0, vendors = ['moz', 'webkit', 'o', 'ms'], x;
@@ -520,7 +526,9 @@ var RAFScheduler = (function () {
         window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
     }
 
+    // Check if full standard supported
     if (!window.cancelAnimationFrame) {
+        // Check if standard partially supported
         if (!window.requestAnimationFrame) {
             // No support, emulate standard
             window.requestAnimationFrame = function (callback) {
@@ -568,7 +576,7 @@ var RAFScheduler = (function () {
             };
         }
     }
-})(this));
+}(this));
 var CPosition = (function () {
     function CPosition(x, y) {
         if (typeof x === "undefined") { x = 0; }
@@ -626,7 +634,7 @@ var ground = new eee.Entity().add(new CPosition(0, 550)).add(new CSize(400, 40))
 
 ground.add(new CPhysicsBody(-200, -20, 200, 20, true));
 
-new eee.Entity().add(new CPosition(300, 350)).add(new CSize(500, 40)).add(new CInput()).add(new CSkin('#009')).add(new CPhysicsBody(-250, -20, 250, 20, true));
+new eee.Entity().add(new CPosition(300, 450)).add(new CSize(500, 40)).add(new CInput()).add(new CSkin('#009')).add(new CPhysicsBody(-250, -20, 250, 20, true));
 var Ezelia;
 (function (Ezelia) {
     (function (Germiz) {

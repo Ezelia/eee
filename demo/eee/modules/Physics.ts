@@ -33,23 +33,27 @@ module modules {
             if (!pbody.isground) {
 
                 if (input.keys.UP || input.keys.SPACE) {
-                        // up arrow or space
-                        if (!pbody.jumping && pbody.grounded) {
-                            pbody.jumping = true;
-                            pbody.grounded = false;
+                    // up arrow or space
+                    if (!pbody.jumping && pbody.grounded) {
+                        pbody.jumping = true;
+                        pbody.grounded = false;
 
-                            pbody.vy = -pbody.speed * 2;
-                            pos.y -= 1;
-                        }
+                        pbody.vy = -pbody.speed * 2;
+                        pos.y -= 1;
                     }
+                }
                 if (input.keys.RIGHT) {
-                        // right arrow
-                        if (pbody.vx < pbody.speed) { pbody.vx++; }
-                } if (input.keys.LEFT) {         // left arrow
-                        if (pbody.vx > -pbody.speed) {
-                            pbody.vx--;
-                        }
+                    // right arrow
+                    if (pbody.vx < pbody.speed) {
+                        pbody.vx = pbody.jumping ? pbody.vx + 2 : pbody.vx+1;
+                        
                     }
+                }
+                if (input.keys.LEFT) {         // left arrow
+                    if (pbody.vx > -pbody.speed) {
+                        pbody.vx = pbody.jumping ? pbody.vx - 2 : pbody.vx - 1;
+                    }
+                }
                 
 
                 pbody.vx *= this.friction;
