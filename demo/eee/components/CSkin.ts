@@ -7,6 +7,6 @@ class CSkin implements eee.IComponent {
     
 
 
-    constructor() { }
+    constructor(public color:any = '#000') { }
 
 }

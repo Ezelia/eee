@@ -2,10 +2,10 @@
 // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
 // requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
 // MIT license
-(function (window) {
+((function (window) {
     'use strict';
 
-    if (navigator.isCocoonJS)
+    if ((navigator).isCocoonJS)
         return;
 
     var lastTime = 0, vendors = ['moz', 'webkit', 'o', 'ms'], x;
@@ -15,9 +15,7 @@
         window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
     }
 
-    // Check if full standard supported
     if (!window.cancelAnimationFrame) {
-        // Check if standard partially supported
         if (!window.requestAnimationFrame) {
             // No support, emulate standard
             window.requestAnimationFrame = function (callback) {
@@ -65,5 +63,5 @@
             };
         }
     }
-}(this));
+})(this));
 //# sourceMappingURL=RAF.js.map

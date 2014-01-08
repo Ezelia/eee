@@ -1,5 +1,5 @@
-var CRigidBox = (function () {
-    function CRigidBox(x1, y1, x2, y2, isground) {
+var CPhysicsBody = (function () {
+    function CPhysicsBody(x1, y1, x2, y2, isground) {
         if (typeof x1 === "undefined") { x1 = 0; }
         if (typeof y1 === "undefined") { y1 = 0; }
         if (typeof x2 === "undefined") { x2 = 0; }
@@ -10,9 +10,15 @@ var CRigidBox = (function () {
         this.x2 = x2;
         this.y2 = y2;
         this.isground = isground;
+        this.jumping = false;
         this.grounded = false;
+        //velocity
+        this.vx = 0;
+        this.vy = 0;
+        //
+        this.speed = 15;
     }
-    CRigidBox.__label__ = 'rbox';
-    return CRigidBox;
+    CPhysicsBody.__label__ = 'rbox';
+    return CPhysicsBody;
 })();
-//# sourceMappingURL=CRigidBox.js.map
+//# sourceMappingURL=CPhysicsBody.js.map

@@ -40,10 +40,15 @@ var modules;
             if (!this.isInViewPort(pos, size))
                 return;
 
+            var skin = entity.get(CSkin);
+
             var x = pos.x - size.width / 2;
             var y = pos.y - size.height / 2;
 
+            this.ctx.save();
+            this.ctx.fillStyle = skin.color;
             this.ctx.fillRect(x, y, size.width, size.height);
+            this.ctx.restore();
         };
 
         Renderer.prototype.update = function () {

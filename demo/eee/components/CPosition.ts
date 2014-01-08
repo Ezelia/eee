@@ -4,5 +4,5 @@ class CPosition implements eee.IComponent {
     constructor(
         public x: number = 0,
         public y: number = 0
-        ) { }
+        ) {}
 }

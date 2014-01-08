@@ -1,21 +1,22 @@
 declare module eee {
     class EventHandler {
         private _events;
-        public bind(event: any, fct: any): void;
-        public on(event: any, fct: any): void;
-        public unbind(event: any, fct: any): void;
-        public unbindEvent(event: any): void;
+        public bind(event, fct): void;
+        public on(event, fct): void;
+        public unbind(event, fct): void;
+        public unbindEvent(event): void;
         public unbindAll(): void;
-        public trigger(event: any, ...args: any[]): void;
-        public registerEvent(evtname: any): void;
+        public trigger(event, ...args: any[]): void;
+        public triggerBehaviour(event, entity: eee.Entity, ...args: any[]): void;
+        public registerEvent(evtname): void;
     }
 }
 declare module eee {
     class TModule extends eee.EventHandler {
         public entities: any[];
-        public id: any;
+        public id;
         private dependency;
-        public components: any;
+        public components;
         constructor(dependency: any[], components?: any[]);
         public init(): void;
         public registerEntity(entity: eee.Entity): any;
@@ -29,17 +30,17 @@ declare class HashMap {
     public keys: any[];
     public index: any;
     constructor();
-    public add(key: any, value: any): any;
-    public get(key: any): any;
-    public hasKey(key: any): boolean;
-    public remove(key: any): any;
-    public each(fn: any): void;
+    public add(key, value);
+    public get(key);
+    public hasKey(key): boolean;
+    public remove(key);
+    public each(fn): void;
     public clear(): void;
 }
 declare module eee {
     class Entity {
         public recyclable: boolean;
-        public id: any;
+        public id;
         constructor();
         public free(): void;
         public destroy(): void;
@@ -61,7 +62,7 @@ declare module eee {
         * @param {IComponent Type} componentType
         * @return {IComponent} Returns the component instance
         */
-        public get(componentType: new(...args: any[]) => eee.IComponent): any;
+        public get(componentType: new(...args: any[]) => eee.IComponent);
     }
 }
 declare module eee {
@@ -83,26 +84,26 @@ declare module eee {
         *
         */
         private static checkModuleSignature(mod);
-        static insertModule(mod: eee.TModule, id?: string): any;
-        static removeModule(id: any): any;
+        static insertModule(mod: eee.TModule, id?: string);
+        static removeModule(id);
         private static _events;
-        static bind(event: any, fct: any): void;
-        static on(event: any, fct: any): void;
-        static unbind(event: any, fct: any): void;
-        static unbindEvent(event: any): void;
+        static bind(event, fct): void;
+        static on(event, fct): void;
+        static unbind(event, fct): void;
+        static unbindEvent(event): void;
         static unbindAll(): void;
-        static trigger(event: any, ...args: any[]): void;
-        static registerEvent(evtname: any): void;
+        static trigger(event, ...args: any[]): void;
+        static registerEvent(evtname): void;
     }
 }
 declare module eee {
     interface IScheduler {
-        tick(): any;
-        updateModules(modules: eee.TModule[]): any;
+        tick();
+        updateModules(modules: eee.TModule[]);
     }
 }
 declare module util {
-    function getTypeName(t: any): string;
+    function getTypeName(t): string;
     function getGUID(): string;
 }
 declare module eee {
@@ -113,4 +114,9 @@ declare module eee {
     }
 }
 declare module eee {
+    class CBehaviour implements eee.IComponent {
+        static __label__: string;
+        public behaviourClass: eee.TBehaviour;
+        constructor(behaviourType?: new() => eee.TBehaviour);
+    }
 }
