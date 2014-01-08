@@ -1,8 +1,9 @@
 /// <reference path="../eee/eee.d.ts" />
 declare class CSkin implements eee.IComponent {
+    public color: any;
     static __label__: string;
     public sprite: HTMLImageElement;
-    constructor();
+    constructor(color?: any);
 }
 declare class CSize implements eee.IComponent {
     public width: number;
@@ -11,25 +12,40 @@ declare class CSize implements eee.IComponent {
     constructor(width?: number, height?: number);
 }
 declare module util.DOM {
-    function select(el: any): void;
-    function getNumericStyleProperty(style: any, prop: any): number;
-    function element_position(e: any): {
+    function select(el): void;
+    function getNumericStyleProperty(style, prop): number;
+    function element_position(e): {
         x: number;
         y: number;
     };
-    function triggerDomEvent(element: any, eventName: any, sender: any): void;
-    function AddEvent(element: any, event_name: any, event_function: any): void;
-    function Ready(fn: any): void;
+    function triggerDomEvent(element, eventName, sender): void;
+    function AddEvent(element, event_name, event_function): void;
+    function Ready(fn): void;
 }
-declare class CRigidBox implements eee.IComponent {
+declare class CPhysicsBody implements eee.IComponent {
     public x1: number;
     public y1: number;
     public x2: number;
     public y2: number;
     public isground: boolean;
     static __label__: string;
+    public jumping: boolean;
     public grounded: boolean;
+    public vx: number;
+    public vy: number;
+    public speed: number;
     constructor(x1?: number, y1?: number, x2?: number, y2?: number, isground?: boolean);
+}
+declare class CInput implements eee.IComponent {
+    static __label__: string;
+    public keys: {
+        UP: boolean;
+        DOWN: boolean;
+        LEFT: boolean;
+        RIGHT: boolean;
+        SPACE: boolean;
+    };
+    constructor();
 }
 declare module modules {
     class Renderer extends eee.TModule {
@@ -60,6 +76,22 @@ declare module modules {
         constructor(gravity?: number);
         public init(): void;
         public updateEntity(entity: eee.Entity): void;
+        public isColliding(entityA: eee.Entity, entityB: eee.Entity): {
+            dir: string;
+            cx: number;
+            cy: number;
+        };
+        public update(): void;
+    }
+}
+declare module modules {
+    class Input extends eee.TModule {
+        private keys;
+        private keyEventUpdate;
+        constructor();
+        public init(): void;
+        private setupKeyboardEventsListener();
+        public updateEntity(entity: eee.Entity): void;
         public update(): void;
     }
 }
@@ -75,10 +107,15 @@ declare class CPosition implements eee.IComponent {
     static __label__: string;
     constructor(x?: number, y?: number);
 }
+declare class playerBhv extends eee.TBehaviour {
+    public keyUpdate(keys): void;
+}
 declare var canvas: HTMLCanvasElement;
 declare var mPhysics: modules.Physics;
 declare var mRenderer: modules.Renderer;
+declare var mInput: modules.Input;
 declare var player: eee.Entity;
+declare var ground: eee.Entity;
 declare module Ezelia.Germiz {
     class GameEngine extends eee.EventHandler {
         public settings: any;

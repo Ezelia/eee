@@ -24,9 +24,10 @@
     <Content Include="domutils.js">
       <DependentUpon>domutils.ts</DependentUpon>
     </Content>
-    <TypeScriptCompile Include="eee\components\CRigidBox.ts" />
-    <Content Include="eee\components\CRigidBox.js">
-      <DependentUpon>CRigidBox.ts</DependentUpon>
+    <TypeScriptCompile Include="eee\components\CPhysicsBody.ts" />
+    <TypeScriptCompile Include="eee\components\CInput.ts" />
+    <Content Include="eee\components\CInput.js">
+      <DependentUpon>CInput.ts</DependentUpon>
     </Content>
     <Content Include="eee\components\CSize.js">
       <DependentUpon>CSize.ts</DependentUpon>
@@ -40,6 +41,10 @@
       <DependentUpon>CVelocity.ts</DependentUpon>
     </Content>
     <TypeScriptCompile Include="eee\modules\Physics.ts" />
+    <TypeScriptCompile Include="eee\modules\Input.ts" />
+    <Content Include="eee\modules\Input.js">
+      <DependentUpon>Input.ts</DependentUpon>
+    </Content>
     <Content Include="eee\modules\Physics.js">
       <DependentUpon>Physics.ts</DependentUpon>
     </Content>

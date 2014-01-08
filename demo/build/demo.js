@@ -1,5 +1,7 @@
 ﻿var CSkin = (function () {
-    function CSkin() {
+    function CSkin(color) {
+        if (typeof color === "undefined") { color = '#000'; }
+        this.color = color;
     }
     CSkin.__label__ = 'skin';
     return CSkin;
@@ -90,7 +92,6 @@ var util;
             event.eventName = eventName;
             event.sender = sender;
 
-            //event.memo = memo || { };
             if (document.createEvent) {
                 element.dispatchEvent(event);
             } else {
@@ -100,8 +101,8 @@ var util;
         DOM.triggerDomEvent = triggerDomEvent;
         function AddEvent(element, event_name, event_function) {
             if (element.addEventListener)
-                element.addEventListener(event_name, event_function, false); //don't need the 'call' trick because in FF everything already works in the right way
-            else if (element.attachEvent)
+                element.addEventListener(event_name, event_function, false);
+else if (element.attachEvent)
                 element.attachEvent("on" + event_name, function () {
                     event_function.call(element);
                 });
@@ -111,7 +112,7 @@ var util;
         function Ready(fn) {
             var win = window;
 
-            if (navigator.isCocoonJS) {
+            if ((navigator).isCocoonJS) {
                 fn.call(win);
                 return;
             }
@@ -134,7 +135,7 @@ var util;
 
             if (doc.readyState == 'complete')
                 fn.call(win, 'lazy');
-            else {
+else {
                 if (doc.createEventObject && root.doScroll) {
                     try  {
                         top = !win.frameElement;
@@ -152,8 +153,8 @@ var util;
     })(util.DOM || (util.DOM = {}));
     var DOM = util.DOM;
 })(util || (util = {}));
-var CRigidBox = (function () {
-    function CRigidBox(x1, y1, x2, y2, isground) {
+var CPhysicsBody = (function () {
+    function CPhysicsBody(x1, y1, x2, y2, isground) {
         if (typeof x1 === "undefined") { x1 = 0; }
         if (typeof y1 === "undefined") { y1 = 0; }
         if (typeof x2 === "undefined") { x2 = 0; }
@@ -164,10 +165,29 @@ var CRigidBox = (function () {
         this.x2 = x2;
         this.y2 = y2;
         this.isground = isground;
+        this.jumping = false;
         this.grounded = false;
+        //velocity
+        this.vx = 0;
+        this.vy = 0;
+        //
+        this.speed = 15;
     }
-    CRigidBox.__label__ = 'rbox';
-    return CRigidBox;
+    CPhysicsBody.__label__ = 'rbox';
+    return CPhysicsBody;
+})();
+var CInput = (function () {
+    function CInput() {
+        this.keys = {
+            UP: false,
+            DOWN: false,
+            LEFT: false,
+            RIGHT: false,
+            SPACE: false
+        };
+    }
+    CInput.__label__ = 'input';
+    return CInput;
 })();
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -211,10 +231,15 @@ var modules;
             if (!this.isInViewPort(pos, size))
                 return;
 
+            var skin = entity.get(CSkin);
+
             var x = pos.x - size.width / 2;
             var y = pos.y - size.height / 2;
 
+            this.ctx.save();
+            this.ctx.fillStyle = skin.color;
             this.ctx.fillRect(x, y, size.width, size.height);
+            this.ctx.restore();
         };
 
         Renderer.prototype.update = function () {
@@ -247,7 +272,7 @@ var modules;
         __extends(Physics, _super);
         function Physics(gravity) {
             if (typeof gravity === "undefined") { gravity = 10; }
-            _super.call(this, [], [CRigidBox, CPosition]);
+            _super.call(this, [], [CPhysicsBody, CPosition]);
             this.gravity = gravity;
             this.friction = 0.8;
         }
@@ -258,17 +283,128 @@ var modules;
         };
 
         Physics.prototype.updateEntity = function (entity) {
-            var rbody = entity.get(CRigidBox);
+            var pbody = entity.get(CPhysicsBody);
             var pos = entity.get(CPosition);
             var size = entity.get(CSize);
 
-            if (!rbody.isground) {
-                pos.y += (this.deltaTime * this.gravity) / (1000 / 60); //60 FPS
+            var input = entity.get(CInput);
 
-                if (pos.y >= 600 - size.height) {
-                    pos.y = 600 - size.height;
+            if (!pbody.isground) {
+                if (input.keys.UP || input.keys.SPACE) {
+                    if (!pbody.jumping && pbody.grounded) {
+                        pbody.jumping = true;
+                        pbody.grounded = false;
+
+                        pbody.vy = -pbody.speed * 2;
+                        pos.y -= 1;
+                    }
+                }
+                if (input.keys.RIGHT) {
+                    if (pbody.vx < pbody.speed) {
+                        pbody.vx++;
+                    }
+                }
+                if (input.keys.LEFT) {
+                    if (pbody.vx > -pbody.speed) {
+                        pbody.vx--;
+                    }
+                }
+
+                pbody.vx *= this.friction;
+                pbody.vy += this.gravity;
+
+                pbody.grounded = false;
+
+                var keys = this.entities;
+                for (var i = 0; i < keys.length; i++) {
+                    var entity2 = eee.Engine.data.entities.get(keys[i]);
+
+                    //if (!entity2) continue;
+                    //var pbody2: CPhysicsBody = entity2.get(CPhysicsBody);
+                    var col = this.isColliding(entity, entity2);
+                    if (!col)
+                        continue;
+
+                    var pbody2 = entity2.get(CPhysicsBody);
+                    if (pbody2.isground) {
+                        switch (col.dir) {
+                            case 'l':
+                                pos.x += col.cx;
+
+                                pbody.vx = 0;
+                                pbody.jumping = false;
+
+                                break;
+                            case 'r':
+                                pos.x -= col.cx;
+
+                                pbody.vx = 0;
+                                pbody.jumping = false;
+
+                                break;
+                            case 'b':
+                                pos.y -= col.cy;
+
+                                pbody.grounded = true;
+                                pbody.jumping = false;
+                                break;
+                            case 't':
+                                pos.y += col.cy;
+
+                                pbody.vy *= -1;
+                                break;
+                        }
+                    }
+                }
+
+                if (pbody.grounded) {
+                    pbody.vy = 0;
+                }
+
+                pos.x += pbody.vx;
+                pos.y += pbody.vy;
+            }
+        };
+
+        Physics.prototype.isColliding = function (entityA, entityB) {
+            if (!entityA || !entityB)
+                return null;
+            var pbodyA = entityA.get(CPhysicsBody);
+            var posA = entityA.get(CPosition);
+
+            var pbodyB = entityB.get(CPhysicsBody);
+            var posB = entityB.get(CPosition);
+
+            // get the vectors to check against
+            var vX = posA.x - posB.x;
+            var vY = posA.y - posB.y;
+
+            // add the half widths and half heights of the objects
+            var hWidths = (pbodyA.x2 - pbodyA.x1 + pbodyB.x2 - pbodyB.x1) / 2;
+            var hHeights = (pbodyA.y2 - pbodyA.y1 + pbodyB.y2 - pbodyB.y1) / 2;
+            var colDir = '';
+
+            if (Math.abs(vX) <= hWidths && Math.abs(vY) <= hHeights) {
+                var oX = hWidths - Math.abs(vX), oY = hHeights - Math.abs(vY);
+                if (oX >= oY) {
+                    if (vY > 0) {
+                        colDir = "t";
+                        //if (adjustPos) posA.y += oY;
+                    } else {
+                        colDir = "b";
+                        //if (adjustPos) posA.y -= oY;
+                    }
+                } else {
+                    if (vX > 0) {
+                        colDir = "l";
+                        //if (adjustPos) posA.x += oX;
+                    } else {
+                        colDir = "r";
+                        //if (adjustPos) posA.x -= oX;
+                    }
                 }
             }
+            return { dir: colDir, cx: oX, cy: oY };
         };
 
         Physics.prototype.update = function () {
@@ -286,6 +422,59 @@ var modules;
         return Physics;
     })(eee.TModule);
     modules.Physics = Physics;
+})(modules || (modules = {}));
+var modules;
+(function (modules) {
+    var Input = (function (_super) {
+        __extends(Input, _super);
+        function Input() {
+            _super.call(this, [], [CInput]);
+            this.keys = [];
+            this.keyEventUpdate = false;
+
+            this.registerEvent('keyUpdate');
+        }
+        Input.prototype.init = function () {
+            var _this = this;
+            _super.prototype.init.call(this);
+
+            this.setupKeyboardEventsListener();
+        };
+
+        Input.prototype.setupKeyboardEventsListener = function () {
+            var _this = this;
+            document.body.addEventListener("keydown", function (e) {
+                _this.keys[e.keyCode] = true;
+                _this.keyEventUpdate = true;
+            });
+
+            document.body.addEventListener("keyup", function (e) {
+                _this.keys[e.keyCode] = false;
+                _this.keyEventUpdate = true;
+            });
+        };
+
+        Input.prototype.updateEntity = function (entity) {
+            if (this.keyEventUpdate) {
+                var input = entity.get(CInput);
+
+                //input.keys = this.keys; //TODO : update entity keys instead of referencing Module keys
+                this.triggerBehaviour('keyUpdate', entity, this.keys);
+            }
+        };
+        Input.prototype.update = function () {
+            var keys = this.entities;
+            for (var i = 0; i < keys.length; i++) {
+                var entity = eee.Engine.data.entities.get(keys[i]);
+
+                this.updateEntity(entity);
+            }
+
+            this.keyEventUpdate = false;
+        };
+        return Input;
+    })(eee.TModule);
+    modules.Input = Input;
 })(modules || (modules = {}));
 var RAFScheduler = (function () {
     function RAFScheduler() {
@@ -318,10 +507,10 @@ var RAFScheduler = (function () {
 // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
 // requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
 // MIT license
-(function (window) {
+((function (window) {
     'use strict';
 
-    if (navigator.isCocoonJS)
+    if ((navigator).isCocoonJS)
         return;
 
     var lastTime = 0, vendors = ['moz', 'webkit', 'o', 'ms'], x;
@@ -331,9 +520,7 @@ var RAFScheduler = (function () {
         window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
     }
 
-    // Check if full standard supported
     if (!window.cancelAnimationFrame) {
-        // Check if standard partially supported
         if (!window.requestAnimationFrame) {
             // No support, emulate standard
             window.requestAnimationFrame = function (callback) {
@@ -381,7 +568,7 @@ var RAFScheduler = (function () {
             };
         }
     }
-}(this));
+})(this));
 var CPosition = (function () {
     function CPosition(x, y) {
         if (typeof x === "undefined") { x = 0; }
@@ -396,22 +583,50 @@ var CPosition = (function () {
 util.DOM.Ready(function () {
 });
 
+var playerBhv = (function (_super) {
+    __extends(playerBhv, _super);
+    function playerBhv() {
+        _super.apply(this, arguments);
+    }
+    playerBhv.prototype.keyUpdate = function (keys) {
+        var input = this.entity.get(CInput);
+        var pbody = this.entity.get(CPhysicsBody);
+
+        input.keys.UP = keys[38];
+        input.keys.SPACE = keys[32];
+        input.keys.LEFT = keys[37];
+        input.keys.RIGHT = keys[39];
+    };
+    return playerBhv;
+})(eee.TBehaviour);
+
 var canvas = document.createElement('canvas');
 canvas.width = 600;
 canvas.height = 600;
 document.body.appendChild(canvas);
 
-var mPhysics = new modules.Physics(10);
+var mPhysics = new modules.Physics(2);
 var mRenderer = new modules.Renderer(canvas);
+var mInput = new modules.Input();
 
+eee.Engine.insertModule(mInput);
 eee.Engine.insertModule(mPhysics);
 eee.Engine.insertModule(mRenderer);
 
 eee.Engine.start(RAFScheduler);
 
-var player = new eee.Entity().add(new CPosition(100, 100)).add(new CSize(20, 20)).add(new CSkin());
+var player = new eee.Entity().add(new CPosition(100, 500)).add(new CSize(20, 20)).add(new CInput()).add(new CSkin('#f00'));
 
-player.add(new CRigidBox(-10, -10, 10, 10, false));
+player.add(new CPhysicsBody(-10, -10, 10, 10, false));
+
+//var bhv = new playerBhv(player);
+player.add(new eee.CBehaviour(playerBhv));
+
+var ground = new eee.Entity().add(new CPosition(0, 550)).add(new CSize(400, 40)).add(new CInput()).add(new CSkin());
+
+ground.add(new CPhysicsBody(-200, -20, 200, 20, true));
+
+new eee.Entity().add(new CPosition(300, 350)).add(new CSize(500, 40)).add(new CInput()).add(new CSkin('#009')).add(new CPhysicsBody(-250, -20, 250, 20, true));
 var Ezelia;
 (function (Ezelia) {
     (function (Germiz) {

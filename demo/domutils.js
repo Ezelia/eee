@@ -74,7 +74,6 @@ var util;
             event.eventName = eventName;
             event.sender = sender;
 
-            //event.memo = memo || { };
             if (document.createEvent) {
                 element.dispatchEvent(event);
             } else {
@@ -84,8 +83,8 @@ var util;
         DOM.triggerDomEvent = triggerDomEvent;
         function AddEvent(element, event_name, event_function) {
             if (element.addEventListener)
-                element.addEventListener(event_name, event_function, false); //don't need the 'call' trick because in FF everything already works in the right way
-            else if (element.attachEvent)
+                element.addEventListener(event_name, event_function, false);
+else if (element.attachEvent)
                 element.attachEvent("on" + event_name, function () {
                     event_function.call(element);
                 });
@@ -95,7 +94,7 @@ var util;
         function Ready(fn) {
             var win = window;
 
-            if (navigator.isCocoonJS) {
+            if ((navigator).isCocoonJS) {
                 fn.call(win);
                 return;
             }
@@ -118,7 +117,7 @@ var util;
 
             if (doc.readyState == 'complete')
                 fn.call(win, 'lazy');
-            else {
+else {
                 if (doc.createEventObject && root.doScroll) {
                     try  {
                         top = !win.frameElement;
