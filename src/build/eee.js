@@ -42,13 +42,28 @@ var eee;
                     this._events[event][i].apply(this, args);
                 }
             }
+            ////trigger behaviour events
+            //if (args[0] instanceof Entity
+            //    && args[0].behaviour
+            //    && args[0].behaviour.behaviourClass instanceof TBehaviour
+            //    && typeof args[0].behaviour.behaviourClass[event] == 'function') {
+            //    console.log('!!experimental!! trigger behaviour');
+            //    var bhvclass = args[0].behaviour.behaviourClass;
+            //    bhvclass[event].apply(bhvclass, args);
+            //}
+        };
+        EventHandler.prototype.triggerBehaviour = function (event, entity) {
+            var args = [];
+            for (var _i = 0; _i < (arguments.length - 2); _i++) {
+                args[_i] = arguments[_i + 2];
+            }
+            var behaviour = entity.get(eee.CBehaviour);
 
-            //trigger behaviour events
-            if (args[0] instanceof eee.Entity && args[0].behaviour && args[0].behaviour.behaviourClass instanceof eee.TBehaviour && typeof args[0].behaviour.behaviourClass[event] == 'function') {
+            if (behaviour && behaviour.behaviourClass instanceof eee.TBehaviour && typeof behaviour.behaviourClass[event] == 'function') {
                 console.log('!!experimental!! trigger behaviour');
 
-                var bhvclass = args[0].behaviour.behaviourClass;
-
+                var bhvclass = behaviour.behaviourClass;
+                bhvclass.entity = entity;
                 bhvclass[event].apply(bhvclass, args);
             }
         };
@@ -83,11 +98,12 @@ var eee;
             _super.call(this);
             this.entities = [];
 
-            this.id = util.getTypeName(this.constructor);
+            this.id = util.getTypeName((this).constructor);
             this.dependency = dependency;
             this.components = components;
         }
         TModule.prototype.init = function () {
+            //basic module dependency handling
             console.log('Init Module ', this.id);
             if (this.dependency) {
                 for (var i = 0; i < this.dependency.length; i++) {
@@ -111,10 +127,6 @@ var eee;
                 return this.entities.push(entity.id);
         };
         TModule.prototype.unregisterEntity = function (entity) {
-            //this.entities[this.entities.indexOf(entityId)] = undefined;
-            //console.log('removing entity ', entityId, ' from module ', this.id);
-            //we should maybe use a faster datastructure to avoid slice() ?
-            ////console.warn('!!! this need to be tested # module name=', this.id);
             var idx = this.entities.indexOf(entity.id);
 
             if (idx != -1)
@@ -129,9 +141,11 @@ var eee;
 })(eee || (eee = {}));
 /*
 This is an experimental HashMap implementation with some features I needed and didn't found in JS default Arrays and Objects
+
 Features :
 * Direct acces too elements throught .get(key)
 * fast keys or values iteration using for (;;) instead of for in syntax (http://jsperf.com/array-keys-vs-object-keys-iteration/3 )
+
 */
 var HashMap = (function () {
     function HashMap() {
@@ -146,7 +160,6 @@ var HashMap = (function () {
 
         var previous = undefined;
 
-        //Are we replacing an existing element ?
         if (this.hasKey(key)) {
             previous = this.values[this.index[key].data];
             this.values[this.index[key].data] = undefined;
@@ -217,7 +230,7 @@ var eee;
             for (var i = 0; i < eee.Engine.data.modules.values.length; i++) {
                 if (!eee.Engine.data.modules.values[i])
                     continue;
-                eee.Engine.data.modules.values[i].unregisterEntity(this.id);
+                (eee.Engine.data.modules.values[i]).unregisterEntity(this.id);
             }
 
             this.recyclable = true;
@@ -227,7 +240,7 @@ var eee;
             for (var i = 0; i < eee.Engine.data.modules.values.length; i++) {
                 if (!eee.Engine.data.modules.values[i])
                     continue;
-                eee.Engine.data.modules.values[i].unregisterEntity(this);
+                (eee.Engine.data.modules.values[i]).unregisterEntity(this);
             }
             eee.Engine.data.entities.remove(this.id);
 
@@ -244,22 +257,22 @@ var eee;
             for (var i = 0; i < eee.Engine.data.modules.values.length; i++) {
                 if (!eee.Engine.data.modules.values[i])
                     continue;
-                eee.Engine.data.modules.values[i].registerEntity(this);
+                (eee.Engine.data.modules.values[i]).registerEntity(this);
             }
         };
         Entity.prototype.unregister = function () {
             for (var i = 0; i < eee.Engine.data.modules.values.length; i++) {
                 if (!eee.Engine.data.modules.values[i])
                     continue;
-                eee.Engine.data.modules.values[i].unregisterEntity(this);
+                (eee.Engine.data.modules.values[i]).unregisterEntity(this);
             }
         };
 
         Entity.prototype.add = function (componentInstance) {
-            if (!componentInstance.constructor.__label__)
-                componentInstance.constructor.__label__ = util.getTypeName(componentInstance.constructor);
+            if (!(componentInstance).constructor.__label__)
+                (componentInstance).constructor.__label__ = util.getTypeName((componentInstance).constructor);
 
-            var label = componentInstance.constructor.__label__;
+            var label = (componentInstance).constructor.__label__;
             if (!this[label]) {
                 this[label] = componentInstance;
 
@@ -270,7 +283,7 @@ var eee;
         };
 
         Entity.prototype.remove = function (componentType) {
-            var label = componentType.__label__;
+            var label = (componentType).__label__;
             if (this[label]) {
                 this[label] = undefined;
 
@@ -287,7 +300,7 @@ var eee;
         */
         Entity.prototype.has = function (componentType) {
             //var label = ComponentManager.getLabel(cmpType);
-            return (this[componentType.__label__] !== undefined);
+            return (this[(componentType).__label__] !== undefined);
         };
 
         Entity.prototype.hasAll = function (components) {
@@ -306,7 +319,7 @@ var eee;
         */
         Entity.prototype.get = function (componentType) {
             //var label = ComponentManager.getLabel(cmpType);
-            return this[componentType.__label__];
+            return this[(componentType).__label__];
         };
         return Entity;
     })();
@@ -346,12 +359,12 @@ var eee;
             return entity;
         };
 
-        /**
+        Engine.checkModuleSignature = /**
         *
         *
         *
         */
-        Engine.checkModuleSignature = function (mod) {
+        function (mod) {
             return (mod.init && mod.update && mod.registerEntity && mod.unregisterEntity);
         };
         Engine.insertModule = function (mod, id) {
@@ -386,8 +399,8 @@ var eee;
             this._events[event].push(fct);
         };
 
-        //same as bind
-        Engine.on = function (event, fct) {
+        Engine.on = //same as bind
+        function (event, fct) {
             this._events = this._events || {};
             this._events[event] = this._events[event] || [];
             this._events[event].push(fct);
@@ -488,5 +501,6 @@ var eee;
         CBehaviour.__label__ = 'behaviour';
         return CBehaviour;
     })();
+    eee.CBehaviour = CBehaviour;
 })(eee || (eee = {}));
 //# sourceMappingURL=eee.js.map

@@ -32,12 +32,12 @@ var eee;
             return entity;
         };
 
-        /**
+        Engine.checkModuleSignature = /**
         *
         *
         *
         */
-        Engine.checkModuleSignature = function (mod) {
+        function (mod) {
             return (mod.init && mod.update && mod.registerEntity && mod.unregisterEntity);
         };
         Engine.insertModule = function (mod, id) {
@@ -72,8 +72,8 @@ var eee;
             this._events[event].push(fct);
         };
 
-        //same as bind
-        Engine.on = function (event, fct) {
+        Engine.on = //same as bind
+        function (event, fct) {
             this._events = this._events || {};
             this._events[event] = this._events[event] || [];
             this._events[event].push(fct);

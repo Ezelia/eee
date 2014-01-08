@@ -16,7 +16,7 @@ module eee {
             this.components = components;
         }
         public init() {
-
+            //basic module dependency handling
             console.log('Init Module ', this.id);
             if (this.dependency) {
                 for (var i = 0; i < this.dependency.length; i++) {
@@ -42,10 +42,6 @@ module eee {
 
         }
         public unregisterEntity(entity: Entity) {
-            //this.entities[this.entities.indexOf(entityId)] = undefined;
-            //console.log('removing entity ', entityId, ' from module ', this.id);
-            //we should maybe use a faster datastructure to avoid slice() ?
-            ////console.warn('!!! this need to be tested # module name=', this.id);
             var idx = this.entities.indexOf(entity.id);
             
             if (idx != -1 /*&& this.components && entity.hasAll(this.components)*/)

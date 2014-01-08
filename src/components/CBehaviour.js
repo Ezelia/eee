@@ -10,5 +10,6 @@ var eee;
         CBehaviour.__label__ = 'behaviour';
         return CBehaviour;
     })();
+    eee.CBehaviour = CBehaviour;
 })(eee || (eee = {}));
 //# sourceMappingURL=CBehaviour.js.map

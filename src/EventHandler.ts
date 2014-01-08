@@ -37,20 +37,34 @@ module eee {
                 }
             }
 
-            //trigger behaviour events
+            ////trigger behaviour events
 
-            if (args[0] instanceof Entity
-                && args[0].behaviour
-                && args[0].behaviour.behaviourClass instanceof TBehaviour
-                && typeof args[0].behaviour.behaviourClass[event] == 'function') {
+            //if (args[0] instanceof Entity
+            //    && args[0].behaviour
+            //    && args[0].behaviour.behaviourClass instanceof TBehaviour
+            //    && typeof args[0].behaviour.behaviourClass[event] == 'function') {
+            //    console.log('!!experimental!! trigger behaviour');
+
+
+            //    var bhvclass = args[0].behaviour.behaviourClass;
+
+            //    bhvclass[event].apply(bhvclass, args);
+            //}
+
+        }
+        triggerBehaviour(event, entity: Entity, ...args: any[]) {
+            var behaviour: CBehaviour = entity.get(CBehaviour);
+
+            if (behaviour
+                && behaviour.behaviourClass instanceof TBehaviour
+                && typeof behaviour.behaviourClass[event] == 'function') {
                 console.log('!!experimental!! trigger behaviour');
 
 
-                var bhvclass = args[0].behaviour.behaviourClass;
-
+                var bhvclass = behaviour.behaviourClass;
+                bhvclass.entity = entity;
                 bhvclass[event].apply(bhvclass, args);
             }
-
         }
         registerEvent(evtname) {
             this[evtname] = function (callback, replace) {

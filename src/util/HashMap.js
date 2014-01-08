@@ -1,8 +1,10 @@
 /*
 This is an experimental HashMap implementation with some features I needed and didn't found in JS default Arrays and Objects
+
 Features :
 * Direct acces too elements throught .get(key)
 * fast keys or values iteration using for (;;) instead of for in syntax (http://jsperf.com/array-keys-vs-object-keys-iteration/3 )
+
 */
 var HashMap = (function () {
     function HashMap() {
@@ -17,7 +19,6 @@ var HashMap = (function () {
 
         var previous = undefined;
 
-        //Are we replacing an existing element ?
         if (this.hasKey(key)) {
             previous = this.values[this.index[key].data];
             this.values[this.index[key].data] = undefined;

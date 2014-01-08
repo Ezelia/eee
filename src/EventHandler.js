@@ -42,13 +42,28 @@ var eee;
                     this._events[event][i].apply(this, args);
                 }
             }
+            ////trigger behaviour events
+            //if (args[0] instanceof Entity
+            //    && args[0].behaviour
+            //    && args[0].behaviour.behaviourClass instanceof TBehaviour
+            //    && typeof args[0].behaviour.behaviourClass[event] == 'function') {
+            //    console.log('!!experimental!! trigger behaviour');
+            //    var bhvclass = args[0].behaviour.behaviourClass;
+            //    bhvclass[event].apply(bhvclass, args);
+            //}
+        };
+        EventHandler.prototype.triggerBehaviour = function (event, entity) {
+            var args = [];
+            for (var _i = 0; _i < (arguments.length - 2); _i++) {
+                args[_i] = arguments[_i + 2];
+            }
+            var behaviour = entity.get(eee.CBehaviour);
 
-            //trigger behaviour events
-            if (args[0] instanceof eee.Entity && args[0].behaviour && args[0].behaviour.behaviourClass instanceof eee.TBehaviour && typeof args[0].behaviour.behaviourClass[event] == 'function') {
+            if (behaviour && behaviour.behaviourClass instanceof eee.TBehaviour && typeof behaviour.behaviourClass[event] == 'function') {
                 console.log('!!experimental!! trigger behaviour');
 
-                var bhvclass = args[0].behaviour.behaviourClass;
-
+                var bhvclass = behaviour.behaviourClass;
+                bhvclass.entity = entity;
                 bhvclass[event].apply(bhvclass, args);
             }
         };

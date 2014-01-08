@@ -10,7 +10,7 @@ var eee;
             for (var i = 0; i < eee.Engine.data.modules.values.length; i++) {
                 if (!eee.Engine.data.modules.values[i])
                     continue;
-                eee.Engine.data.modules.values[i].unregisterEntity(this.id);
+                (eee.Engine.data.modules.values[i]).unregisterEntity(this.id);
             }
 
             this.recyclable = true;
@@ -20,7 +20,7 @@ var eee;
             for (var i = 0; i < eee.Engine.data.modules.values.length; i++) {
                 if (!eee.Engine.data.modules.values[i])
                     continue;
-                eee.Engine.data.modules.values[i].unregisterEntity(this);
+                (eee.Engine.data.modules.values[i]).unregisterEntity(this);
             }
             eee.Engine.data.entities.remove(this.id);
 
@@ -37,22 +37,22 @@ var eee;
             for (var i = 0; i < eee.Engine.data.modules.values.length; i++) {
                 if (!eee.Engine.data.modules.values[i])
                     continue;
-                eee.Engine.data.modules.values[i].registerEntity(this);
+                (eee.Engine.data.modules.values[i]).registerEntity(this);
             }
         };
         Entity.prototype.unregister = function () {
             for (var i = 0; i < eee.Engine.data.modules.values.length; i++) {
                 if (!eee.Engine.data.modules.values[i])
                     continue;
-                eee.Engine.data.modules.values[i].unregisterEntity(this);
+                (eee.Engine.data.modules.values[i]).unregisterEntity(this);
             }
         };
 
         Entity.prototype.add = function (componentInstance) {
-            if (!componentInstance.constructor.__label__)
-                componentInstance.constructor.__label__ = util.getTypeName(componentInstance.constructor);
+            if (!(componentInstance).constructor.__label__)
+                (componentInstance).constructor.__label__ = util.getTypeName((componentInstance).constructor);
 
-            var label = componentInstance.constructor.__label__;
+            var label = (componentInstance).constructor.__label__;
             if (!this[label]) {
                 this[label] = componentInstance;
 
@@ -63,7 +63,7 @@ var eee;
         };
 
         Entity.prototype.remove = function (componentType) {
-            var label = componentType.__label__;
+            var label = (componentType).__label__;
             if (this[label]) {
                 this[label] = undefined;
 
@@ -80,7 +80,7 @@ var eee;
         */
         Entity.prototype.has = function (componentType) {
             //var label = ComponentManager.getLabel(cmpType);
-            return (this[componentType.__label__] !== undefined);
+            return (this[(componentType).__label__] !== undefined);
         };
 
         Entity.prototype.hasAll = function (components) {
@@ -99,7 +99,7 @@ var eee;
         */
         Entity.prototype.get = function (componentType) {
             //var label = ComponentManager.getLabel(cmpType);
-            return this[componentType.__label__];
+            return this[(componentType).__label__];
         };
         return Entity;
     })();
