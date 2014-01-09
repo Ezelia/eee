@@ -12,15 +12,15 @@ declare class CSize implements eee.IComponent {
     constructor(width?: number, height?: number);
 }
 declare module util.DOM {
-    function select(el: any): void;
-    function getNumericStyleProperty(style: any, prop: any): number;
-    function element_position(e: any): {
+    function select(el): void;
+    function getNumericStyleProperty(style, prop): number;
+    function element_position(e): {
         x: number;
         y: number;
     };
-    function triggerDomEvent(element: any, eventName: any, sender: any): void;
-    function AddEvent(element: any, event_name: any, event_function: any): void;
-    function Ready(fn: any): void;
+    function triggerDomEvent(element, eventName, sender): void;
+    function AddEvent(element, event_name, event_function): void;
+    function Ready(fn): void;
 }
 declare class CPhysicsBody implements eee.IComponent {
     public x1: number;
@@ -45,7 +45,6 @@ declare class CInput implements eee.IComponent {
         DOWN: boolean;
         LEFT: boolean;
         RIGHT: boolean;
-        SPACE: boolean;
     };
     constructor();
 }
@@ -109,13 +108,13 @@ declare class CPosition implements eee.IComponent {
     static __label__: string;
     constructor(x?: number, y?: number);
 }
-declare class playerBhv extends eee.TBehaviour {
-    public keyUpdate(keys: any): void;
-}
 declare var canvas: HTMLCanvasElement;
 declare var mPhysics: modules.Physics;
 declare var mRenderer: modules.Renderer;
 declare var mInput: modules.Input;
+declare class playerBhv extends eee.TBehaviour {
+    public keyUpdate(keys): void;
+}
 declare var player: eee.Entity;
 declare var ground: eee.Entity;
 declare module Ezelia.Germiz {

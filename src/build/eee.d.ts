@@ -17,7 +17,7 @@ declare module eee {
         public id;
         private dependency;
         public components;
-        constructor(dependency: any[], components?: any[]);
+        constructor(dependency?: any[], components?: any[]);
         public init(): void;
         public registerEntity(entity: eee.Entity): any;
         public unregisterEntity(entity: eee.Entity): void;

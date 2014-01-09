@@ -20,7 +20,7 @@ var CPhysicsBody = (function () {
         //
         this.speed = 12;
     }
-    CPhysicsBody.__label__ = 'rbox';
+    CPhysicsBody.__label__ = 'pbody';
     return CPhysicsBody;
 })();
 //# sourceMappingURL=CPhysicsBody.js.map

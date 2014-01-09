@@ -1,11 +1,11 @@
 var CInput = (function () {
     function CInput() {
+        //define mappable inputs
         this.keys = {
             UP: false,
             DOWN: false,
             LEFT: false,
-            RIGHT: false,
-            SPACE: false
+            RIGHT: false
         };
     }
     CInput.__label__ = 'input';

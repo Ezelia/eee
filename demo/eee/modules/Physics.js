@@ -6,6 +6,10 @@ var __extends = this.__extends || function (d, b) {
 };
 var modules;
 (function (modules) {
+    //this physics module is highly inspired from this tutorial
+    //http://www.somethinghitme.com/2013/04/16/creating-a-canvas-platformer-tutorial-part-tw/
+    //the physics modele is not perfect for a real platformer game
+    // but it's simple and easy to understand.
     var Physics = (function (_super) {
         __extends(Physics, _super);
         function Physics(gravity) {
@@ -28,8 +32,7 @@ var modules;
             var input = entity.get(CInput);
 
             if (!pbody.isground) {
-                if (input.keys.UP || input.keys.SPACE) {
-                    // up arrow or space
+                if (input.keys.UP) {
                     if (!pbody.jumping && pbody.grounded) {
                         pbody.jumping = true;
                         pbody.grounded = false;
@@ -39,7 +42,6 @@ var modules;
                     }
                 }
                 if (input.keys.RIGHT) {
-                    // right arrow
                     if (pbody.vx < pbody.speed) {
                         pbody.vx = pbody.jumping ? pbody.vx + 2 : pbody.vx + 1;
                     }
@@ -51,7 +53,7 @@ var modules;
                 }
 
                 pbody.vx *= this.friction;
-                pbody.vy += this.gravity; //(this.deltaTime * this.gravity) / (1000 / 60);
+                pbody.vy += (this.deltaTime * this.gravity) / (1000 / 60);
 
                 pbody.grounded = false;
 
@@ -124,24 +126,19 @@ var modules;
             var hHeights = (pbodyA.y2 - pbodyA.y1 + pbodyB.y2 - pbodyB.y1) / 2;
             var colDir = '';
 
-            // if the x and y vector are less than the half width or half height, they we must be inside the object, causing a collision
             if (Math.abs(vX) <= hWidths && Math.abs(vY) <= hHeights) {
                 var oX = hWidths - Math.abs(vX), oY = hHeights - Math.abs(vY);
                 if (oX >= oY) {
                     if (vY > 0) {
                         colDir = "t";
-                        //if (adjustPos) posA.y += oY;
                     } else {
                         colDir = "b";
-                        //if (adjustPos) posA.y -= oY;
                     }
                 } else {
                     if (vX > 0) {
                         colDir = "l";
-                        //if (adjustPos) posA.x += oX;
                     } else {
                         colDir = "r";
-                        //if (adjustPos) posA.x -= oX;
                     }
                 }
             }

@@ -99,7 +99,7 @@ var eee;
             this.entities = [];
 
             this.id = util.getTypeName((this).constructor);
-            this.dependency = dependency;
+            this.dependency = dependency || [];
             this.components = components;
         }
         TModule.prototype.init = function () {

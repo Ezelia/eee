@@ -1,5 +1,5 @@
 class CPhysicsBody implements eee.IComponent {
-    static __label__ = 'rbox';
+    static __label__ = 'pbody';
 
     public jumping: boolean = false;
     public grounded: boolean = false;

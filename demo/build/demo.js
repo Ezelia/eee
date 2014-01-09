@@ -92,7 +92,6 @@ var util;
             event.eventName = eventName;
             event.sender = sender;
 
-            //event.memo = memo || { };
             if (document.createEvent) {
                 element.dispatchEvent(event);
             } else {
@@ -102,8 +101,8 @@ var util;
         DOM.triggerDomEvent = triggerDomEvent;
         function AddEvent(element, event_name, event_function) {
             if (element.addEventListener)
-                element.addEventListener(event_name, event_function, false); //don't need the 'call' trick because in FF everything already works in the right way
-            else if (element.attachEvent)
+                element.addEventListener(event_name, event_function, false);
+else if (element.attachEvent)
                 element.attachEvent("on" + event_name, function () {
                     event_function.call(element);
                 });
@@ -113,7 +112,7 @@ var util;
         function Ready(fn) {
             var win = window;
 
-            if (navigator.isCocoonJS) {
+            if ((navigator).isCocoonJS) {
                 fn.call(win);
                 return;
             }
@@ -136,7 +135,7 @@ var util;
 
             if (doc.readyState == 'complete')
                 fn.call(win, 'lazy');
-            else {
+else {
                 if (doc.createEventObject && root.doScroll) {
                     try  {
                         top = !win.frameElement;
@@ -176,17 +175,17 @@ var CPhysicsBody = (function () {
         //
         this.speed = 12;
     }
-    CPhysicsBody.__label__ = 'rbox';
+    CPhysicsBody.__label__ = 'pbody';
     return CPhysicsBody;
 })();
 var CInput = (function () {
     function CInput() {
+        //define mappable inputs
         this.keys = {
             UP: false,
             DOWN: false,
             LEFT: false,
-            RIGHT: false,
-            SPACE: false
+            RIGHT: false
         };
     }
     CInput.__label__ = 'input';
@@ -271,6 +270,10 @@ var CVelocity = (function () {
 })();
 var modules;
 (function (modules) {
+    //this physics module is highly inspired from this tutorial
+    //http://www.somethinghitme.com/2013/04/16/creating-a-canvas-platformer-tutorial-part-tw/
+    //the physics modele is not perfect for a real platformer game (it behaves differently depending on computer/browser perfs)
+    // but it's simple and easy to understand.
     var Physics = (function (_super) {
         __extends(Physics, _super);
         function Physics(gravity) {
@@ -293,8 +296,7 @@ var modules;
             var input = entity.get(CInput);
 
             if (!pbody.isground) {
-                if (input.keys.UP || input.keys.SPACE) {
-                    // up arrow or space
+                if (input.keys.UP) {
                     if (!pbody.jumping && pbody.grounded) {
                         pbody.jumping = true;
                         pbody.grounded = false;
@@ -304,7 +306,6 @@ var modules;
                     }
                 }
                 if (input.keys.RIGHT) {
-                    // right arrow
                     if (pbody.vx < pbody.speed) {
                         pbody.vx = pbody.jumping ? pbody.vx + 2 : pbody.vx + 1;
                     }
@@ -316,7 +317,7 @@ var modules;
                 }
 
                 pbody.vx *= this.friction;
-                pbody.vy += this.gravity; //(this.deltaTime * this.gravity) / (1000 / 60);
+                pbody.vy += (this.deltaTime * this.gravity) / (1000 / 60);
 
                 pbody.grounded = false;
 
@@ -389,24 +390,19 @@ var modules;
             var hHeights = (pbodyA.y2 - pbodyA.y1 + pbodyB.y2 - pbodyB.y1) / 2;
             var colDir = '';
 
-            // if the x and y vector are less than the half width or half height, they we must be inside the object, causing a collision
             if (Math.abs(vX) <= hWidths && Math.abs(vY) <= hHeights) {
                 var oX = hWidths - Math.abs(vX), oY = hHeights - Math.abs(vY);
                 if (oX >= oY) {
                     if (vY > 0) {
                         colDir = "t";
-                        //if (adjustPos) posA.y += oY;
                     } else {
                         colDir = "b";
-                        //if (adjustPos) posA.y -= oY;
                     }
                 } else {
                     if (vX > 0) {
                         colDir = "l";
-                        //if (adjustPos) posA.x += oX;
                     } else {
                         colDir = "r";
-                        //if (adjustPos) posA.x -= oX;
                     }
                 }
             }
@@ -498,12 +494,10 @@ var RAFScheduler = (function () {
         requestAnimationFrame(function () {
             RAFScheduler.tick();
         });
-
-        if (typeof this.tickCB == 'function')
-            this.tickCB();
     };
 
-    RAFScheduler.updateModules = function (modules) {
+    RAFScheduler.updateModules = //Used by eee.Engine when registering the scheduler
+    function (modules) {
         this.modules = modules;
     };
     RAFScheduler.modules = [];
@@ -513,10 +507,10 @@ var RAFScheduler = (function () {
 // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
 // requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
 // MIT license
-(function (window) {
+((function (window) {
     'use strict';
 
-    if (navigator.isCocoonJS)
+    if ((navigator).isCocoonJS)
         return;
 
     var lastTime = 0, vendors = ['moz', 'webkit', 'o', 'ms'], x;
@@ -526,9 +520,7 @@ var RAFScheduler = (function () {
         window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
     }
 
-    // Check if full standard supported
     if (!window.cancelAnimationFrame) {
-        // Check if standard partially supported
         if (!window.requestAnimationFrame) {
             // No support, emulate standard
             window.requestAnimationFrame = function (callback) {
@@ -576,7 +568,7 @@ var RAFScheduler = (function () {
             };
         }
     }
-}(this));
+})(this));
 var CPosition = (function () {
     function CPosition(x, y) {
         if (typeof x === "undefined") { x = 0; }
@@ -588,26 +580,6 @@ var CPosition = (function () {
     return CPosition;
 })();
 /// <reference path="eee/eee.d.ts" />
-util.DOM.Ready(function () {
-});
-
-var playerBhv = (function (_super) {
-    __extends(playerBhv, _super);
-    function playerBhv() {
-        _super.apply(this, arguments);
-    }
-    playerBhv.prototype.keyUpdate = function (keys) {
-        var input = this.entity.get(CInput);
-        var pbody = this.entity.get(CPhysicsBody);
-
-        input.keys.UP = keys[38];
-        input.keys.SPACE = keys[32];
-        input.keys.LEFT = keys[37];
-        input.keys.RIGHT = keys[39];
-    };
-    return playerBhv;
-})(eee.TBehaviour);
-
 var canvas = document.createElement('canvas');
 canvas.width = 600;
 canvas.height = 600;
@@ -620,21 +592,35 @@ var mInput = new modules.Input();
 eee.Engine.insertModule(mInput);
 eee.Engine.insertModule(mPhysics);
 eee.Engine.insertModule(mRenderer);
-
 eee.Engine.start(RAFScheduler);
 
-var player = new eee.Entity().add(new CPosition(100, 500)).add(new CSize(20, 20)).add(new CInput()).add(new CSkin('#f00'));
+var playerBhv = (function (_super) {
+    __extends(playerBhv, _super);
+    function playerBhv() {
+        _super.apply(this, arguments);
+    }
+    playerBhv.prototype.keyUpdate = function (keys) {
+        var input = this.entity.get(CInput);
+        var pbody = this.entity.get(CPhysicsBody);
 
-player.add(new CPhysicsBody(-10, -10, 10, 10, false));
+        input.keys.UP = keys[38];
+        input.keys.LEFT = keys[37];
+        input.keys.RIGHT = keys[39];
+    };
+    return playerBhv;
+})(eee.TBehaviour);
 
-//var bhv = new playerBhv(player);
-player.add(new eee.CBehaviour(playerBhv));
+var player = new eee.Entity().add(new CPosition(100, 500)).add(new CSize(20, 20)).add(new CPhysicsBody(-10, -10, 10, 10, false)).add(new CSkin('#f00')).add(new CInput()).add(new eee.CBehaviour(playerBhv));
 
-var ground = new eee.Entity().add(new CPosition(0, 550)).add(new CSize(400, 40)).add(new CInput()).add(new CSkin());
+//here we define another object keeping a reference to it (ground) so we can add components later
+var ground = new eee.Entity().add(new CPosition(0, 550)).add(new CSize(400, 40)).add(new CSkin());
 
+//we can add/remove components at any time :)
 ground.add(new CPhysicsBody(-200, -20, 200, 20, true));
 
-new eee.Entity().add(new CPosition(300, 450)).add(new CSize(500, 40)).add(new CInput()).add(new CSkin('#009')).add(new CPhysicsBody(-250, -20, 250, 20, true));
+//if we only need to instantiate an entity with some component, we don't need to keep a reference
+// this is another ground
+new eee.Entity().add(new CPosition(300, 450)).add(new CSize(500, 40)).add(new CSkin('#009')).add(new CPhysicsBody(-250, -20, 250, 20, true));
 var Ezelia;
 (function (Ezelia) {
     (function (Germiz) {

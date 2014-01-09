@@ -14,12 +14,10 @@ var RAFScheduler = (function () {
         requestAnimationFrame(function () {
             RAFScheduler.tick();
         });
-
-        if (typeof this.tickCB == 'function')
-            this.tickCB();
     };
 
-    RAFScheduler.updateModules = function (modules) {
+    RAFScheduler.updateModules = //Used by eee.Engine when registering the scheduler
+    function (modules) {
         this.modules = modules;
     };
     RAFScheduler.modules = [];

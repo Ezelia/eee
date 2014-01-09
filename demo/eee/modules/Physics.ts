@@ -1,6 +1,12 @@
 module modules {
-    export class Physics extends eee.TModule {
 
+    //this physics module is highly inspired from this tutorial
+    //http://www.somethinghitme.com/2013/04/16/creating-a-canvas-platformer-tutorial-part-tw/
+
+    //the physics modele is not perfect for a real platformer game 
+    // but it's simple and easy to understand.
+
+    export class Physics extends eee.TModule {
 
         private lastTime: number;
         private deltaTime: number;
@@ -32,7 +38,7 @@ module modules {
 
             if (!pbody.isground) {
 
-                if (input.keys.UP || input.keys.SPACE) {
+                if (input.keys.UP ) {
                     // up arrow or space
                     if (!pbody.jumping && pbody.grounded) {
                         pbody.jumping = true;
@@ -57,7 +63,7 @@ module modules {
                 
 
                 pbody.vx *= this.friction;
-                pbody.vy += this.gravity; //(this.deltaTime * this.gravity) / (1000 / 60);
+                pbody.vy += (this.deltaTime * this.gravity) / (1000 / 60);
 
                 pbody.grounded = false;
 
@@ -129,8 +135,8 @@ module modules {
             var posB: CPosition = entityB.get(CPosition);
 
             // get the vectors to check against
-            var vX = posA.x - posB.x;//(posA.x + (pbodyA.x1 + pbodyA.x2) / 2) - (posB.x + (pbodyB.x1 + pbodyB.x2) / 2),
-            var vY = posA.y - posB.y;//(posA.y + (pbodyA.y1 + pbodyA.y2) / 2) - (shapeB.y + (shapeB.height / 2)),
+            var vX = posA.x - posB.x;
+            var vY = posA.y - posB.y;
             // add the half widths and half heights of the objects
 
 
@@ -146,18 +152,18 @@ module modules {
                 if (oX >= oY) {
                     if (vY > 0) {
                         colDir = "t";
-                        //if (adjustPos) posA.y += oY;
+                        
                     } else {
                         colDir = "b";
-                        //if (adjustPos) posA.y -= oY;
+                        
                     }
                 } else {
                     if (vX > 0) {
                         colDir = "l";
-                        //if (adjustPos) posA.x += oX;
+                        
                     } else {
                         colDir = "r";
-                        //if (adjustPos) posA.x -= oX;
+                        
                     }
                 }
             }

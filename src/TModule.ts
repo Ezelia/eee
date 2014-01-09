@@ -8,11 +8,11 @@ module eee {
         public id;
         private dependency;
         public components;
-        constructor(dependency: any[], components?: any[]) {
+        constructor(dependency?: any[], components?: any[]) {
             super();
 
             this.id = util.getTypeName((<any>this).constructor);
-            this.dependency = dependency;
+            this.dependency = dependency || [];
             this.components = components;
         }
         public init() {

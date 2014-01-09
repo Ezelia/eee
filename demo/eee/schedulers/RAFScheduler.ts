@@ -13,10 +13,9 @@ class RAFScheduler /*implements eee.IScheduler*/ {
         }
 
         requestAnimationFrame(function () { RAFScheduler.tick(); });
-
-        if (typeof this.tickCB == 'function') this.tickCB();
     }
 
+    //Used by eee.Engine when registering the scheduler
     static updateModules(modules: eee.TModule[]) {
         this.modules = modules;
     }
