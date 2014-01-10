@@ -61,10 +61,6 @@
     </Content>
     <Content Include="eee\eee.d.ts" />
     <Content Include="eee\eee.js" />
-    <TypeScriptCompile Include="oop\engine.ts" />
-    <Content Include="oop\engine.js">
-      <DependentUpon>engine.ts</DependentUpon>
-    </Content>
     <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>
