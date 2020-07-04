@@ -1,0 +1,7 @@
+.vscode
+.vs
+node_modules
+typings
+obj
+bin
+*.csproj*

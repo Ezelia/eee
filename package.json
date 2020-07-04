@@ -1,0 +1,23 @@
+{
+  "name": "eee",
+  "version": "1.0.0",
+  "description": "Ezelia Entities Engine",
+  "main": "dist/eee.umd.js",
+  "module": "dist/eee.es6.js",
+  "typings": "dist/types/eee.d.ts",
+
+  "scripts": {
+    "clean":"rimraf build/* && rimraf dist/*",
+    "build": "rollup -c"
+  },
+  "author": "Ezelia",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^4.1.2",
+    "rimraf": "^3.0.2",
+    "rollup-plugin-dts": "^1.4.7",
+    "rollup-plugin-typescript2": "^0.27.1",
+    "typescript": "^3.9.3"
+  }
+}

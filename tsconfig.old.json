@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "alwaysStrict" : true,
+        "target": "es6",
+        "module": "amd",
+        "sourceMap": true,
+        "declaration": true,
+        "outFile": "eee.js",
+        "outDir": "./build"
+
+    },
+    "exclude": [
+        "lib",
+        "build",
+        "node_modules"
+    ]
+}
